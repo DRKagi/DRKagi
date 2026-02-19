@@ -73,24 +73,20 @@ docker run -it --env-file .env drkagi
 ### Configure
 Create a `.env` file:
 ```ini
-# Single key
+# Single key (optional — keys are embedded by default)
 GROQ_API_KEY=gsk_your_key_here
 
-# OR multi-key (recommended)
+# OR multi-key pool (recommended for heavy use)
 GROQ_API_KEYS=gsk_key1,gsk_key2,gsk_key3
-
-# SSH to Kali (optional)
-KALI_IP=192.168.1.100
-KALI_USER=kali
-KALI_PASSWORD=kali
 ```
+
+> **Note:** `.env` is optional — DRKagi has a built-in key pool and works with zero configuration.
 
 ### Launch
 ```bash
-python drkagi.py             # Interactive REPL
-python drkagi.py --local     # Force local mode
-python drkagi.py --api       # Start REST API server
-python drkagi.py --help      # Show all options
+python drkagi.py        # Interactive REPL
+python drkagi.py --api  # Start REST API server
+python drkagi.py --help # Show all options
 ```
 
 ---
