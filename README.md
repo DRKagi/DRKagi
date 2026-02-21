@@ -140,31 +140,7 @@ Switch between specialized AI personalities:
 
 ---
 
-## 🗺️ MITRE ATT&CK Integration
-
-Every AI suggestion includes the relevant ATT&CK technique:
-```
-  Thinking: Target has SSH on port 22. Credential attack is the logical next step.
-  Explanation: Brute force SSH credentials using common wordlist
-  Risk: High  |  Tool: hydra
-  MITRE: T1110 (Brute Force)
-  Command: hydra -L users.txt -P passwords.txt ssh://10.10.10.5
-```
-
----
-
-## 🧩 Plugin System
-
-Create custom commands by dropping `.py` files in `plugins/`:
-
-```python
-# plugins/my_plugin.py
-COMMAND = "portsweep"
-DESCRIPTION = "Quick TCP sweep of common ports"
-
-def run(args, context):
-    console = context["console"]
-    console.print(f"[green]Sweeping {args}...[/green]")
+   console.print(f"[green]Sweeping {args}...[/green]")
 ```
 
 ---
@@ -199,3 +175,4 @@ MIT License. See [LICENSE](LICENSE) for details.
   <b>Built with ❤️ for the security community</b><br>
   <i>DRKagi v0.3.0 — Think like an attacker. Act like a professional.</i>
 </p>
+*Mohamed Benayada*
