@@ -141,7 +141,8 @@ Switch between specialized AI personalities:
 ---
 
    console.print(f"[green]Sweeping {args}...[/green]")
-```
+
+   
 ---
 ## 🌐 REST API
 
@@ -176,3 +177,4 @@ MIT License. See [LICENSE](LICENSE) for details.
   <i>DRKagi v0.3.0 — Think like an attacker. Act like a professional.</i>
 </p>
 *Mohamed Benayada*
+---
