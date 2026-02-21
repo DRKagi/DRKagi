@@ -70,15 +70,6 @@ docker build -t drkagi .
 docker run -it --env-file .env drkagi
 ```
 
-### Configure
-Create a `.env` file:
-```ini
-# Single key (optional — keys are embedded by default)
-GROQ_API_KEY=gsk_your_key_here
-
-# OR multi-key pool (recommended for heavy use)
-GROQ_API_KEYS=gsk_key1,gsk_key2,gsk_key3
-```
 
 > **Note:** `.env` is optional — DRKagi has a built-in key pool and works with zero configuration.
 
@@ -199,34 +190,6 @@ Start the API server: `python drkagi.py --api`
 | `/api/targets` | GET | List discovered targets |
 | `/api/simulate` | POST | Simulate attack scenario |
 | `/api/cve` | GET | CVE lookup by service |
-
----
-
-## 🏗️ Architecture
-
-```
-DRKagi/
-├── drkagi.py              # Core REPL (30+ commands)
-├── agent.py             # AI brain (MITRE, CoT, personas)
-├── api_middleware.py     # Multi-key rotation + cooldown
-├── executor.py          # Local command execution
-├── cve_lookup.py        # NVD CVE lookup
-├── config.py            # Environment config
-├── database.py          # SQLite storage
-├── logger.py            # JSONL session logging
-├── pdf_reporter.py      # PDF report generator
-├── dashboard.py         # Streamlit web dashboard
-├── personas.py          # 5 AI personas
-├── profiles.py          # Engagement profiles
-├── plugin_loader.py     # Plugin system
-├── session_manager.py   # Session resume
-├── personas.py          # 5 AI personas
-├── vault.py             # Encrypted credential vault
-├── api_server.py        # Flask REST API
-├── Dockerfile           # Kali Docker image
-├── install.sh           # One-line installer
-└── plugins/             # Custom plugins
-```
 
 ---
 
