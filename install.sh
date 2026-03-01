@@ -91,6 +91,11 @@ python3 drkagi.py "\$@"
 LAUNCHEOF
 sudo chmod +x /usr/local/bin/drkagi
 
+# ── Create drkagi-anon (AnonSurf/Tor compatible) ─────────
+echo -e "${GREEN}[+] Installing drkagi-anon (AnonSurf support)...${NC}"
+sudo cp "$INSTALL_DIR/drkagi-anon" /usr/local/bin/drkagi-anon
+sudo chmod +x /usr/local/bin/drkagi-anon
+
 # ── Done ─────────────────────────────────────────────────
 echo ""
 echo -e "${GREEN}═══════════════════════════════════════════════${NC}"

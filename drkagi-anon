@@ -1,0 +1,65 @@
+#!/bin/bash
+# ─────────────────────────────────────────────────────────────
+# drkagi-anon — Run DRKagi under AnonSurf (Tor) safely
+# Adds iptables bypass for Groq API so AI works while Tor is active
+# Usage: drkagi-anon [drkagi args...]
+# ─────────────────────────────────────────────────────────────
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+INSTALL_DIR="$HOME/DRKagi"
+API_HOST="api.groq.com"
+
+# ── Resolve Groq API IP ──────────────────────────────────────
+echo -e "${YELLOW}[*] Resolving Groq API address...${NC}"
+
+# Use a direct DNS query bypassing Tor's DNS (query Google DNS directly)
+GROQ_IPS=$(dig +short @8.8.8.8 "$API_HOST" A 2>/dev/null | grep -E '^[0-9]+\.' | head -5)
+
+if [ -z "$GROQ_IPS" ]; then
+    # Fallback: try system DNS
+    GROQ_IPS=$(getent hosts "$API_HOST" 2>/dev/null | awk '{print $1}')
+fi
+
+if [ -z "$GROQ_IPS" ]; then
+    echo -e "${RED}[-] Could not resolve $API_HOST. Check DNS.${NC}"
+    echo -e "${YELLOW}    Try: anonsurf stop && drkagi${NC}"
+    exit 1
+fi
+
+# ── Add iptables bypass rules ────────────────────────────────
+echo -e "${GREEN}[+] Adding Tor bypass for Groq API...${NC}"
+ADDED_RULES=()
+
+for IP in $GROQ_IPS; do
+    echo -e "    [bypass] $IP → direct (not Tor)"
+    iptables -t nat -I OUTPUT -d "$IP" -p tcp --dport 443 -j RETURN 2>/dev/null && \
+        ADDED_RULES+=("$IP")
+done
+
+if [ ${#ADDED_RULES[@]} -eq 0 ]; then
+    echo -e "${RED}[-] Failed to add iptables rules. Run as root (sudo).${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}[+] AI traffic will bypass Tor. Scanning traffic stays anonymous.${NC}"
+echo -e "${GREEN}[+] Launching DRKagi...${NC}"
+echo ""
+
+# ── Cleanup function ─────────────────────────────────────────
+cleanup() {
+    echo -e "\n${YELLOW}[*] Removing bypass rules...${NC}"
+    for IP in "${ADDED_RULES[@]}"; do
+        iptables -t nat -D OUTPUT -d "$IP" -p tcp --dport 443 -j RETURN 2>/dev/null
+    done
+    echo -e "${GREEN}[+] Tor rules restored. Goodbye.${NC}"
+}
+trap cleanup EXIT INT TERM
+
+# ── Launch DRKagi ────────────────────────────────────────────
+cd "$INSTALL_DIR" || exit 1
+source .venv/bin/activate
+python3 drkagi.py "$@"

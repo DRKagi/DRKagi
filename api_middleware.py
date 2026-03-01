@@ -97,6 +97,14 @@ class APIMiddleware:
                     elif "invalid_api_key" in error_str or "authentication" in error_str:
                         self.mark_key_failed(current_key, "invalid_key")
                         continue
+                    elif "403" in error_str or "access denied" in error_str:
+                        # Tor exit node blocked by Groq API
+                        raise Exception(
+                            "AI Error: Groq API blocked this connection (403).\n"
+                            "  Cause: AnonSurf/Tor exit nodes are blocked by Groq.\n"
+                            "  Fix:   Use 'drkagi-anon' instead of 'drkagi' when AnonSurf is active.\n"
+                            "         sudo drkagi-anon"
+                        )
                     else:
                         raise
 
