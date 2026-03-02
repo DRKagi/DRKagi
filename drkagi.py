@@ -143,6 +143,66 @@ def print_help(persona_name=None):
 
 
 # ═══════════════════════════════════════════════════════════════
+# INTERACTIVE MENU
+# ═══════════════════════════════════════════════════════════════
+
+MENU_ITEMS = [
+    # (number, category, label, command_to_run)
+    ("1",  "SCAN",      "Port Scan (quick)",          "__scan_prompt__"),
+    ("2",  "SCAN",      "Vulnerability Scan (deep)",  "__vscan_prompt__"),
+    ("3",  "SCAN",      "Autopilot (full auto)",       "__autopilot_prompt__"),
+    ("4",  "SCAN",      "Show all discovered targets", "show targets"),
+    ("5",  "REPORT",    "Generate PDF Report",         "generate pdf"),
+    ("6",  "REPORT",    "Export session to Markdown",  "export md"),
+    ("7",  "REPORT",    "Attack Map (Mermaid)",         "attack map"),
+    ("8",  "TOOLS",     "Dashboard (Web UI)",           "dashboard"),
+    ("9",  "TOOLS",     "Credential Vault",             "vault list"),
+    ("10", "TOOLS",     "Generate Wordlist",            "__wordlist_prompt__"),
+    ("11", "TOOLS",     "Script Generator",             "__script_prompt__"),
+    ("12", "TOOLS",     "Simulate Attack Scenario",     "__simulate_prompt__"),
+    ("13", "SESSION",   "Save Session",                 "__session_save__"),
+    ("14", "SESSION",   "Load Session",                 "__session_load__"),
+    ("15", "SESSION",   "Command History",              "history"),
+    ("16", "AI",        "Switch AI Persona",            "persona list"),
+    ("17", "AI",        "API & System Status",          "status"),
+    ("18", "AI",        "List Plugins",                 "plugins"),
+    ("0",  "GENERAL",   "Exit DRKagi",                  "exit"),
+]
+
+CATEGORY_COLORS = {
+    "SCAN":    "bold red",
+    "REPORT":  "bold blue",
+    "TOOLS":   "bold yellow",
+    "SESSION": "bold green",
+    "AI":      "bold magenta",
+    "GENERAL": "dim",
+}
+
+def show_menu():
+    """Display a Rich interactive numbered menu."""
+    from rich.columns import Columns
+    console.print()
+    console.print("[bold red] DRKagi — Quick Menu[/bold red]")
+    console.print("[dim] Type a number and press Enter[/dim]\n")
+
+    current_cat = None
+    for num, cat, label, _ in MENU_ITEMS:
+        if cat != current_cat:
+            current_cat = cat
+            color = CATEGORY_COLORS.get(cat, "white")
+            console.print(f"  [{color}]── {cat} ──[/{color}]")
+        console.print(f"    [bold cyan]{num:>2}[/bold cyan]  {label}")
+    console.print()
+
+    choice = console.input("[bold white]  Choose (0-18): [/bold white]").strip()
+    # Find matching item
+    for num, cat, label, cmd in MENU_ITEMS:
+        if choice == num:
+            return cmd, label
+    return None, None
+
+
+# ═══════════════════════════════════════════════════════════════
 # HELPER FUNCTIONS
 # ═══════════════════════════════════════════════════════════════
 
@@ -421,6 +481,45 @@ def main():
         if cmd == 'help':
             print_help(active_persona)
             continue
+
+        # ── Menu ─────────────────────────────────────────────
+        if cmd in ['menu', 'm']:
+            menu_cmd, menu_label = show_menu()
+            if not menu_cmd:
+                continue
+            # Handle prompts that need user input
+            if menu_cmd == '__scan_prompt__':
+                ip = console.input("  [cyan]Target IP: [/cyan]").strip()
+                user_input = f"scan {ip}"
+            elif menu_cmd == '__vscan_prompt__':
+                ip = console.input("  [cyan]Target IP: [/cyan]").strip()
+                user_input = f"vulnscan {ip}"
+            elif menu_cmd == '__autopilot_prompt__':
+                ip = console.input("  [cyan]Target IP/CIDR: [/cyan]").strip()
+                user_input = f"autopilot {ip}"
+            elif menu_cmd == '__wordlist_prompt__':
+                t = console.input("  [cyan]Target info: [/cyan]").strip()
+                user_input = f"wordlist {t}"
+            elif menu_cmd == '__script_prompt__':
+                t = console.input("  [cyan]Describe the script: [/cyan]").strip()
+                user_input = f"write script {t}"
+            elif menu_cmd == '__simulate_prompt__':
+                t = console.input("  [cyan]Scenario: [/cyan]").strip()
+                user_input = f"simulate {t}"
+            elif menu_cmd == '__session_save__':
+                n = console.input("  [cyan]Session name: [/cyan]").strip()
+                user_input = f"session save {n}"
+            elif menu_cmd == '__session_load__':
+                n = console.input("  [cyan]Session name: [/cyan]").strip()
+                user_input = f"session load {n}"
+            elif menu_cmd == 'exit':
+                console.print("[yellow]Session ended. Stay safe.[/yellow]")
+                break
+            else:
+                user_input = menu_cmd
+            cmd = user_input.lower().strip()
+            console.print(f"[dim]  Running: {user_input}[/dim]")
+            # Fall through to normal command handlers below
 
         # ── Clear ────────────────────────────────────────────
         if cmd == 'clear':
