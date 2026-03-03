@@ -250,32 +250,34 @@ def _truncate_output(text, max_lines=60):
 
 
 def display_suggestion(suggestion, show_thinking=True):
-    """Display AI suggestion as a conversational inline message."""
-    thinking = suggestion.get('thinking', '')
+    """Display AI suggestion in clean chat format."""
+    thinking    = suggestion.get('thinking', '')
     explanation = suggestion.get('explanation', '')
-    command = suggestion.get('command')
-    risk = suggestion.get('risk_level', 'None')
-    tool = suggestion.get('tool_used', '')
-    mitre = suggestion.get('mitre_id', '')
+    command     = suggestion.get('command')
+    risk        = suggestion.get('risk_level', 'None')
+    tool        = suggestion.get('tool_used', '')
+    mitre       = suggestion.get('mitre_id', '')
 
-    # Chain-of-thought — subtle prefix
+    console.print()  # blank line before AI response
+
+    # Chain-of-thought — very subtle
     if show_thinking and thinking:
-        console.print(f"[dim]  ↳ {thinking}[/dim]")
+        console.print(f"[dim]   ↳ {thinking}[/dim]")
 
-    # Conversational message
-    msg = f"[bold green]AI >[/bold green] {explanation}"
+    # AI : label + explanation on same line
+    risk_str = ""
     if risk and risk != 'None':
         risk_color = {"Low": "green", "Medium": "yellow", "High": "red", "Critical": "bold red"}.get(risk, "white")
-        msg += f" ([{risk_color}]{risk} risk[/{risk_color}])"
-    if tool:
-        msg += f" — using [cyan]{tool}[/cyan]"
-    if mitre:
-        msg += f" [[magenta]{mitre}[/magenta]]"
-    console.print(msg)
+        risk_str = f" [{risk_color}][{risk}][/{risk_color}]"
+    tool_str  = f" — [cyan]{tool}[/cyan]" if tool else ""
+    mitre_str = f" [[magenta]{mitre}[/magenta]]" if mitre else ""
+
+    console.print(f"[bold green]   AI :[/bold green] {explanation}{risk_str}{tool_str}{mitre_str}")
 
     if command:
-        console.print(f"  [bold cyan]$[/bold cyan] {command}")
+        console.print(f"[bold cyan]      $[/bold cyan] {command}")
 
+    console.print("[dim]   ─────────────────────────────────────[/dim]")
     return command
 
 
@@ -461,9 +463,10 @@ def main():
             if active_persona:
                 p_info = get_persona(active_persona)
                 if p_info:
-                    p_icon = f"{p_info['icon']}"
-            tgt = f":{current_target}" if current_target else ""
-            prompt = f"{p_icon}[bold red]DRKagi[/bold red][dim]{tgt}[/dim][white] > [/white]"
+                    p_icon = f"{p_info['icon']} "
+            tgt = f"[dim]({current_target})[/dim] " if current_target else ""
+            console.rule(style="dim")
+            prompt = f"{p_icon}[bold red]DRKagi[/bold red] {tgt}[bold white]>>[/bold white] "
             user_input = console.input(prompt).strip()
         except (KeyboardInterrupt, EOFError):
             break
@@ -987,7 +990,7 @@ def main():
 
         logger.log("USER_INPUT", user_input)
 
-        with console.status("[bold green]Thinking...[/bold green]"):
+        with console.status("[bold green]  Thinking...[/bold green]"):
             response_text = agent.get_suggestion(final_input)
 
         logger.log("AI_SUGGESTION", response_text)
@@ -995,6 +998,7 @@ def main():
         try:
             clean_json = response_text.strip().replace('```json', '').replace('```', '')
             suggestion = json.loads(clean_json)
+            console.print()
             command = display_suggestion(suggestion)
 
             # Handle inline script
