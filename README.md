@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/MITRE-ATT%26CK-purple?style=for-the-badge" />
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" />
 </p>
-
+<meta name="google-site-verification" content="-oviaiJALjAVIF2rqxlt47GfXTcqGc6Mk8eRZKXVByM" />
 ```
 ██████╗ ██████╗ ██╗  ██╗ █████╗  ██████╗ ██╗
 ██╔══██╗██╔══██╗██║ ██╔╝██╔══██╗██╔════╝ ██║
