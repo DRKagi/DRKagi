@@ -54,12 +54,12 @@ DRKagi combines **80+ security tools** with **AI reasoning** to automate reconna
 
 ### Option 1: One-Line Install (Kali Linux)
 ```bash
-curl -sL https://raw.githubusercontent.com/Bebayadamohamed17/DRKagi/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/DRKagi/DRKagi/main/install.sh | bash
 ```
 
 ### Option 2: Manual Install
 ```bash
-git clone https://github.com/Bebayadamohamed17/DRKagi.git
+git clone https://github.com/DRKagi/DRKagi.git
 cd DRKagi
 pip install -r requirements.txt
 ```

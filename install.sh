@@ -1,7 +1,7 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────
 # DRKagi — One-Line Installer for Kali Linux
-# Usage: curl -sL https://raw.githubusercontent.com/Bebayadamohamed17/DRKagi/main/install.sh | bash
+# Usage: curl -sL https://raw.githubusercontent.com/DRKagi/DRKagi/main/install.sh | bash
 # ─────────────────────────────────────────────────────────────
 
 set -e
@@ -43,7 +43,7 @@ if [ -d "$INSTALL_DIR" ]; then
     git pull origin main 2>/dev/null || echo -e "${YELLOW}  Could not git pull. Using existing files.${NC}"
 else
     echo -e "${GREEN}[+] Cloning DRKagi...${NC}"
-    git clone https://github.com/Bebayadamohamed17/DRKagi.git "$INSTALL_DIR"
+    git clone https://github.com/DRKagi/DRKagi.git "$INSTALL_DIR"
     cd "$INSTALL_DIR"
 fi
 
